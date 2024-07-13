@@ -1,0 +1,27 @@
+{
+  "name": "crud-task",
+  "version": "1.0.0",
+  "description": "this my weak 6 project  in Fullstack ",
+  "main": "app.js",
+  "scripts": {
+    "start": "src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "mujtabacooder",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.4"
+  }
+}

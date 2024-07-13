@@ -1,0 +1,119 @@
+﻿<%- include('adminheader') -%>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <div class="container-fluid">
+				
+				<div class="row page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Shop</a></li>
+						<li class="breadcrumb-item"><a href="javascript:void(0)">Customers</a></li>
+					</ol>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0 table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th class=" pe-3">
+													<div class="form-check custom-checkbox mx-2">
+														<input type="checkbox" class="form-check-input" id="checkAll">
+														<label class="form-check-label" for="checkAll"></label>
+													</div>
+                                                </th>
+                                                <th>Name</th>
+                                                <th>User name</th>
+                                                <th>Phone</th>
+                                                <th class=" ps-5" style="min-width: 200px;">Billing Address
+                                                </th>
+                                                <th>Actions</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="customers">
+                                            <% users.forEach(user => { %>
+                                            <tr class="btn-reveal-trigger" id="user_<%= user._id %>">
+                                                <td class="py-2">
+                                                    <div class="form-check custom-checkbox mx-2">
+														<input type="checkbox" class="form-check-input" id="checkbox1">
+														<label class="form-check-label" for="checkbox1"></label>
+													</div>
+                                                </td>
+                                                <td class="py-3">
+                                                    <a href="#">
+                                                        <div class="media d-flex align-items-center">
+                                                            <div class="avatar avatar-xl me-2">
+                                                                <div class=""><img class="rounded-circle img-fluid" src="images/avatar/5.png" width="30" alt="">
+                                                                </div>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                <h5 class="mb-0 fs--1"><%= user.fullName %></h5>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                                <td class="py-2"><%= user.username %></td>
+                                                <td class="py-2"> <%= user.mobileNumber %></td>
+                                                <td class="py-2 ps-5"><%= user.address %></td>
+                                                
+                                                <td>
+                                                    <!-- Add action buttons here -->
+                                                    <button type="button" class="btn btn-info   update-btn" data-id="<%= user._id %>">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger delete-btn" data-id="<%= user._id %>" ><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+         <script>
+            document.querySelectorAll('.delete-btn').forEach(button => {
+			button.addEventListener('click', async function() {
+				const userId = this.dataset.id; 
+				try {
+					const response = await fetch(`/users/${userId}`, {
+						method: 'DELETE'
+					});
+	
+					if (response.ok) {
+						document.getElementById(`user_${userId}`).remove();
+                        const result = await response.json()
+
+						alert(`${result.user.fullName} deleted successfully.`);
+					} else {
+						alert('Failed to delete user.');
+					}
+				} catch (error) {
+					console.error('Error deleting user:', error);
+					alert('An error occurred while deleting user.');
+				}
+			});
+		});
+        document.querySelectorAll('.update-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.dataset.id; 
+                    window.location.href = `/updateuser/${userId}`; 
+                });
+            });
+        </script> 
+
+		<%- include('adminfooter') -%>

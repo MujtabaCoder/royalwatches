@@ -1,0 +1,15 @@
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# production build
+/build
+
+# environment variables
+.env
+
+# misc
+.DS_Store
+Thumbs.db

@@ -1,0 +1,153 @@
+<%- include('header') -%>
+    <style>
+        body {
+            display: flex;
+            /* justify-content: center; */
+            /* align-items: center; */
+            height: 100vh;
+            margin: 0;
+        }
+        .content {
+            text-align: center;
+        }
+        .form-group {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <!-- Main content -->
+            <div class="col-md-10">
+                <div class="content">
+                    <!-- User List -->
+                    <div id="user-list">
+                        <h2>Admin Panel</h2>
+                        <div class="row mb-3 justify-content-center">
+                            <div class="col-md-6">
+                                <div class="input-group mb-3">
+									<input type="text" class="form-control" id="searchInput" placeholder="Search by Name">
+									<div class="input-group-append">
+										<button class="btn btn-primary" type="button" id="btnSearch">Search</button>
+									</div>
+								</div>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-primary" id="btnAddUser">
+									Add User
+								</button>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-success" >
+									<a href="/addproductpage" style="color: aliceblue;">Add product</a>
+								</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Full Name</th>
+                                        <th>Mobile Number</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+									<% users.forEach(user => { %>
+										<tr id="user_<%= user._id %>">
+											<td><%= user.fullName %></td>
+											<td><%= user.mobileNumber %></td>
+											<td><%= user.username %></td>
+											<td><%= user.role %></td>
+											<td>
+												<!-- Add action buttons here -->
+												<button type="button" class="btn btn-info   update-btn" data-id="<%= user._id %>">
+													<i class="fas fa-edit"></i>
+												</button>
+												<button type="button" class="btn btn-danger delete-btn" data-id="<%= user._id %>" ><i class="fas fa-trash"></i></button>
+											</td>
+										</tr>
+									<% }); %>
+								</tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /User List -->
+
+                </div>
+            </div>
+            <!-- /Main content -->
+        </div>
+    </div>
+	<script>
+		document.querySelectorAll('.delete-btn').forEach(button => {
+			button.addEventListener('click', async function() {
+				const userId = this.dataset.id; 
+				try {
+					const response = await fetch(`/users/${userId}`, {
+						method: 'DELETE'
+					});
+	
+					if (response.ok) {
+						document.getElementById(`user_${userId}`).remove();
+                        const result = await response.json()
+
+						alert(`${result.user.fullName} deleted successfully.`);
+					} else {
+						alert('Failed to delete user.');
+					}
+				} catch (error) {
+					console.error('Error deleting user:', error);
+					alert('An error occurred while deleting user.');
+				}
+			});
+		});
+
+		document.addEventListener('DOMContentLoaded', function () {
+   			 const btnAddUser = document.getElementById('btnAddUser');
+
+    		btnAddUser.addEventListener('click', function () {
+
+    		    window.location.href = '/adduser';
+    		});
+		});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const btnSearch = document.getElementById('btnSearch');
+
+    btnSearch.addEventListener('click', function () {
+        const searchTerm = searchInput.value.trim().toLowerCase(); 
+
+        const rows = document.querySelectorAll('#user-list table tbody tr');
+
+        rows.forEach(row => {
+            const fullName = row.cells[0].textContent.trim().toLowerCase(); 
+
+            if (fullName.includes(searchTerm)) {
+                row.style.display = ''; 
+            } else {
+                row.style.display = 'none'; 
+            }
+        });
+    });
+});
+
+	
+		
+		document.querySelectorAll('.update-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const userId = this.dataset.id; 
+        window.location.href = `/updateuser/${userId}`; 
+    });
+});
+
+
+	</script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <%- include('footer') -%>

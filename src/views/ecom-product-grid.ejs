@@ -1,0 +1,75 @@
+﻿<%- include('adminheader') -%>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <div class="container-fluid">
+				<div class="row page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Layout</a></li>
+						<li class="breadcrumb-item"><a href="javascript:void(0)">Blank</a></li>
+					</ol>
+                </div>
+				
+                 <div class="row" >
+                  
+                    <% products.forEach(product => { %>
+                        <div class="col-xl-3 col-lg-6 col-sm-6">
+                            <div id="product_<%= product._id %>" >
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="new-arrival-product">
+                                        <div class="new-arrivals-img-contnent">
+                                            <img class="img-fluid" src="<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                                        </div>
+                                        <div class="new-arrival-content text-center mt-3">
+                                            <h4><a href="ecom-product-detail.html"><%= product.productName %></a></h4>
+                                            <span class="price">$<%= product.price %></span>
+                                            
+                                            <button type="button" class="btn btn-danger delete-btn" data-id="<%= product._id %>"  ><i class="fas fa-trash"></i></button>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <% }); %>
+                        
+                    
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+        <script>
+            document.querySelectorAll('.delete-btn').forEach(button => {
+			button.addEventListener('click', async function() {
+				const productId = this.dataset.id; 
+				try {
+					const response = await fetch(`/product/${productId}`, {
+						method: 'DELETE'
+					});
+	
+					if (response.ok) {
+						document.getElementById(`product_${productId}`).remove();
+
+						alert(` product deleted successfully.`);
+					} else {
+						alert('Failed to delete user.');
+					}
+				} catch (error) {
+					console.error('Error deleting user:', error);
+					alert('An error occurred while deleting user.');
+				}
+			});
+		});
+            
+        </script>
+		<%- include('adminfooter') -%>

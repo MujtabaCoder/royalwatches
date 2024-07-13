@@ -1,0 +1,99 @@
+<%- include('header') -%>
+
+<div class="bg-light py-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 mb-0"><a href="/index">Home</a> <span class="mx-2 mb-0">/</span> <a href="/cart">Cart</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Checkout</strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="site-section">
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col-md-12">
+        <div class="border p-4 rounded" role="alert">
+          Returning customer? <a href="#">Click here</a> to login
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-5 mb-md-0">
+        <h2 class="h3 mb-3 text-black">Billing Details</h2>
+        <div class="p-3 p-lg-5 border">
+          <form id="orderForm" method="POST" action="/placeorder">
+            <div class="form-group row">
+              <div class="col-md-6">
+                <label for="fullName" class="text-black">Full Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="fullName" name="fullName" required>
+              </div>
+              <div class="col-md-6">
+                <label for="mobileNumber" class="text-black">Mobile number <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="mobileNumber" name="mobileNumber" required>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-md-12">
+                <label for="email" class="text-black">Email address </label>
+                <input type="email" class="form-control" id="email" name="email">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-md-12">
+                <label for="address" class="text-black">Address <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="Street address" required>
+              </div>
+            </div>
+            <!-- Add more form fields as needed -->
+
+            <input type="hidden" name="products" value='<%= JSON.stringify(productsInCart) %>'>
+            
+
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-lg py-3 btn-block">Place Order</button>
+            </div>
+          
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <h2 class="h3 mb-3 text-black">Your Order</h2>
+        <div class="p-3 p-lg-5 border">
+          <table class="table site-block-order-table mb-5">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% let cartSubtotal = 0; %>
+              <% productsInCart.forEach(item => { %>
+                <% const total = item.product.sellingPrice * item.quantity; %>
+                <tr>
+                  <td><%= item.product.productName %> <strong class="mx-2">x</strong> <%= item.quantity %></td>
+                  <td>$<%= total.toFixed(2) %></td>
+                </tr>
+                <% cartSubtotal += total; %>
+              <% }); %>
+              <tr>
+                <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
+                <td class="text-black">$<%= cartSubtotal.toFixed(2) %></td>
+              </tr>
+              <tr>
+                <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+                <td class="text-black font-weight-bold"><strong>$<%= cartSubtotal.toFixed(2) %></td>
+              </tr>
+              <input type="hidden" name="totalPrice" value="<%= cartSubtotal.toFixed(2) %>">
+            </form>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('footer') -%>

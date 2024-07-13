@@ -1,0 +1,110 @@
+<%- include('adminheader') -%>
+  <title>Upload Product</title>
+  <!-- <style>
+    .image-container {
+      position: relative;
+      display: inline-block;
+    }
+    .image-container .delete-icon {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: red;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+    }
+    .image-container:hover .delete-icon {
+      display: block;
+    }
+  </style> -->
+</head>
+<body>
+  <div class="content-body">
+            
+    <div class="container-fluid">
+    <h1>Upload Product</h1>
+    <form id="uploadProductForm" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
+      <div class="mb-3">
+        <label for="productName" class="form-label">Product Name</label>
+        <input type="text" class="form-control" id="productName" name="productName" placeholder="Enter product name" required>
+      </div>
+      <div class="mb-3">
+        <label for="brandName" class="form-label">Brand Name</label>
+        <input type="text" class="form-control" id="brandName" name="brandName" placeholder="Enter brand name" required>
+      </div>
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select class="form-select" id="category" name="category" required>
+          <option value="">Select Category</option>
+          <!-- Populate categories dynamically -->
+          <option value="watch">Watch</option>
+          <option value="smartwatch">Smartwatch</option>
+          <option value="accessory">Accessory</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="productImage" class="form-label">Product Image</label>
+        <input type="file" class="form-control" id="productImageInput" onchange="handleUploadProduct(event)" name="productImage">
+        <div id="productImagePreview" class="mt-2"></div>
+      </div>
+      <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <input type="number" class="form-control" id="price" name="price" placeholder="Enter price" required>
+      </div>
+      <div class="mb-3">
+        <label for="sellingPrice" class="form-label">Selling Price</label>
+        <input type="number" class="form-control" id="sellingPrice" name="sellingPrice" placeholder="Enter selling price" required>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter product description" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Upload Product</button>
+    </form>
+  </div>
+  </div>
+  <script>
+    async function handleSubmit(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      
+      try {
+        const response = await fetch('/addproduct', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          document.getElementById("uploadProductForm").reset();
+          const result = await response.json();
+          alert(result.message); // Show success message
+          // Optionally reset the form
+          event.target.reset();
+        } else {
+          console.error('Error:', response.statusText);
+          alert('Failed to upload product.'); // Show error message
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to upload product.');
+      }
+    }
+
+    function handleUploadProduct(event) {
+      const input = event.target;
+      const reader = new FileReader();
+      reader.onload = function() {
+        const img = document.createElement('img');
+        img.src = reader.result;
+        img.style.maxWidth = '200px'; // Adjust image preview size
+        const previewContainer = document.getElementById('productImagePreview');
+        previewContainer.innerHTML = ''; // Clear previous preview
+        previewContainer.appendChild(img);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  </script>
+<%- include('adminfooter') -%>

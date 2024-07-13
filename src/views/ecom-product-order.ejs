@@ -1,0 +1,122 @@
+﻿<%- include('adminheader') -%>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <div class="container-fluid">
+				<div class="row page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Shop</a></li>
+						<li class="breadcrumb-item"><a href="javascript:void(0)">Product Order</a></li>
+					</ol>
+                </div>
+				
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="align-middle">
+                                                    <div class="form-check custom-checkbox">
+														<input type="checkbox" class="form-check-input" id="checkAll">
+														<label class="form-check-label" for="checkAll"></label>
+													</div>
+                                                </th>
+                                                <th class="align-middle">User</th>
+                                                <th class="align-middle">Order</th>
+                                                <th class="align-middle pe-7">Date</th>
+                                                <th class="align-middle" style="min-width: 12.5rem;">Ship To</th>
+                                                <th class="align-middle text-end">Status</th>
+                                                <th class="align-middle text-end">Amount</th>
+                                                <th class="no-sort"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="orders">
+                                            
+                                           
+                                                <% orders.forEach(order => { %>
+                                                  <tr id="order_<%= order.orderid %>">
+                                                    <td class="py-2">
+                                                        <div class="form-check custom-checkbox checkbox-success">
+                                                            <input type="checkbox" class="form-check-input" id="checkbox">
+                                                            <label class="form-check-label" for="checkbox"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td><%= order.user %></td>
+                                                    <td>
+                                                      <ul>
+                                                        <% order.products.forEach(product => { %>
+                                                          <li><%= product.name %> - Quantity: <%= product.quantity %></li>
+                                                        <% }); %>
+                                                      </ul>
+                                                    </td>
+                                                    <td><%= order.orderDate %></td>
+                                                    <td><%= order.shippingAddress %></td>
+                                                    <td><label for="status">Order Status:</label><%= order.orderStatus %> 
+                                                        <form action="/order/<%=order.orderid  %>/status" method="POST">
+                                                            
+                                                            <select name="status"  id="status">
+                                                              <option value="Pending">Pending</option>
+                                                              <option value="Shipped">Shipped</option>
+                                                              <option value="Delivered">Delivered</option>
+                                                              <option value="Cancelled">Cancelled</option>
+                                                            </select> 
+                                                            <button  class="btn-primary" type="submit">Update Status</button>
+                                                          </form>
+                                                    </td>
+                                                    <td>$<%= order.totalPrice %></td>
+                                                    <td class="py-2 text-end">
+                                                        <button type="button" class="btn btn-danger delete-btn"data-id="<%=order.orderid  %>" >Delete</button>
+                                                       
+                                                    </td>
+                                                  </tr>
+                                                <% }); %>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        
+        <!--**********************************
+            Content body end
+        ***********************************-->
+        <script>
+            document.querySelectorAll('.delete-btn').forEach(button => {
+			button.addEventListener('click', async function() {
+				const orderId = this.dataset.id; 
+				try {
+					const response = await fetch(`/order/${orderId}`, {
+						method: 'DELETE'
+					});
+	
+					if (response.ok) {
+						document.getElementById(`order_${orderId}`).remove();
+                        const result = await response.json()
+
+						// alert(`deleted successfully.`);
+					} else {
+						alert('Failed to delete user.');
+					}
+				} catch (error) {
+					console.error('Error deleting user:', error);
+					alert('An error occurred while deleting user.');
+				}
+			});
+		});
+
+        </script>
+		<%- include('adminfooter') -%>

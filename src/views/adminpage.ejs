@@ -1,0 +1,197 @@
+<%- include('header') -%>
+
+
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar {
+      height: 100vh;
+      position: absolute;
+      top: 100;
+      left: 0;
+      width: 250px;
+      background-color: #4B0082; /* Dark Purple */
+      color: #fff;
+    }
+    .sidebar a {
+      color: #fff;
+      text-decoration: none;
+      padding: 15px;
+      display: block;
+    }
+    .sidebar a:hover {
+      background-color: #6A0DAD; /* Lighter Purple */
+    }
+    .sidebar .dropdown-toggle::after {
+      color: #fff;
+    }
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+      flex-grow: 1;
+      background-color: #f8f9fa; /* Light Gray */
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2 class="text-center py-4">Admin Panel</h2>
+  <a href="#dashboard">Dashboard</a>
+  <div class="dropdown">
+    <a class="dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">Users</a>
+    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+      <li><a class="dropdown-item" href="#addUser">Add User</a></li>
+      <li><a class="dropdown-item" href="#updateUser">Update User</a></li>
+    </ul>
+  </div>
+  <div class="dropdown">
+    <a class="dropdown-toggle" href="#" role="button" id="productDropdown" data-bs-toggle="dropdown" aria-expanded="false">Products</a>
+    <ul class="dropdown-menu" aria-labelledby="productDropdown">
+      <li><a class="dropdown-item" href="#addProduct">Add Product</a></li>
+      <li><a class="dropdown-item" href="#updateProduct">Update Product</a></li>
+    </ul>
+  </div>
+  <div class="dropdown">
+    <a class="dropdown-toggle" href="#" role="button" id="orderDropdown" data-bs-toggle="dropdown" aria-expanded="false">Orders</a>
+    <ul class="dropdown-menu" aria-labelledby="orderDropdown">
+      <li><a class="dropdown-item" href="#orderList">Order List</a></li>
+    </ul>
+  </div>
+  <a href="#settings">Settings</a>
+</div>
+
+<div class="content">
+  <div id="dashboard" class="mb-5">
+    <h2>Dashboard</h2>
+    <p>Welcome to the admin panel. Use the sidebar to navigate through different sections.</p>
+  </div>
+  <div id="addUser" class="mb-5">
+    <h2>Add User</h2>
+    <form>
+      <div class="mb-3">
+        <label for="userName" class="form-label">User Name</label>
+        <input type="text" class="form-control" id="userName">
+      </div>
+      <div class="mb-3">
+        <label for="userEmail" class="form-label">User Email</label>
+        <input type="email" class="form-control" id="userEmail">
+      </div>
+      <button type="submit" class="btn btn-primary">Add User</button>
+    </form>
+  </div>
+  <div id="updateUser" class="mb-5">
+    <h2>Update User</h2>
+    <!-- Update User form -->
+    <form>
+      <div class="mb-3">
+        <label for="updateUserName" class="form-label">User Name</label>
+        <input type="text" class="form-control" id="updateUserName">
+      </div>
+      <div class="mb-3">
+        <label for="updateUserEmail" class="form-label">User Email</label>
+        <input type="email" class="form-control" id="updateUserEmail">
+      </div>
+      <button type="submit" class="btn btn-primary">Update User</button>
+    </form>
+  </div>
+  <div id="addProduct" class="mb-5">
+    <h2>Add Product</h2>
+    <!-- Add Product form -->
+    <form>
+      <div class="mb-3">
+        <label for="productName" class="form-label">Product Name</label>
+        <input type="text" class="form-control" id="productName">
+      </div>
+      <div class="mb-3">
+        <label for="productCategory" class="form-label">Category</label>
+        <select class="form-select" id="productCategory">
+          <!-- Populate with categories -->
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="productPrice" class="form-label">Price</label>
+        <input type="number" class="form-control" id="productPrice">
+      </div>
+      <div class="mb-3">
+        <label for="productImage" class="form-label">Image URL</label>
+        <input type="text" class="form-control" id="productImage">
+      </div>
+      <button type="submit" class="btn btn-primary">Add Product</button>
+    </form>
+  </div>
+  <div id="updateProduct" class="mb-5">
+    <h2>Update Product</h2>
+    <!-- Update Product form -->
+    <form>
+      <div class="mb-3">
+        <label for="updateProductName" class="form-label">Product Name</label>
+        <input type="text" class="form-control" id="updateProductName">
+      </div>
+      <div class="mb-3">
+        <label for="updateProductCategory" class="form-label">Category</label>
+        <select class="form-select" id="updateProductCategory">
+          <!-- Populate with categories -->
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="updateProductPrice" class="form-label">Price</label>
+        <input type="number" class="form-control" id="updateProductPrice">
+      </div>
+      <div class="mb-3">
+        <label for="updateProductImage" class="form-label">Image URL</label>
+        <input type="text" class="form-control" id="updateProductImage">
+      </div>
+      <button type="submit" class="btn btn-primary">Update Product</button>
+    </form>
+  </div>
+  <div id="orderList" class="mb-5">
+    <h2>Order List</h2>
+    <!-- Orders table -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>User</th>
+          <th>Total Price</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Populate with order data -->
+      </tbody>
+    </table>
+  </div>
+  <div id="settings" class="mb-5">
+    <h2>Settings</h2>
+    <!-- Settings form -->
+    <form>
+      <div class="mb-3">
+        <label for="siteName" class="form-label">Site Name</label>
+        <input type="text" class="form-control" id="siteName">
+      </div>
+      <div class="mb-3">
+        <label for="adminEmail" class="form-label">Admin Email</label>
+        <input type="email" class="form-control" id="adminEmail">
+      </div>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  // JavaScript to handle form submissions, fetching data, and updating the tables can be added here
+</script>
+
+
+
+
+
+
+<%- include('footer') -%>

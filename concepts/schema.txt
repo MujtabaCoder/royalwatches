@@ -1,0 +1,72 @@
+Using `new Admin({...}).save()` vs. `Admin.insertOne({...})` involves different paradigms and use cases in working with MongoDB through Mongoose. Let's break down the differences and the purpose of each approach:
+
+### Using Mongoose Model Instance and `.save()`
+
+```javascript
+const newAdmin = new Admin({
+  fullName,
+  mobileNumber,
+  username,
+  password: hashedPassword,
+  role,
+});
+const response = await newAdmin.save();
+```
+
+#### Explanation and Purpose:
+1. **Mongoose Model Instance**:
+   - `new Admin({ ... })` creates an instance of the `Admin` model. This instance represents a single document in the MongoDB collection associated with the `Admin` model.
+   - This instance has access to all the methods and properties defined in the `Admin` schema, including any custom methods or virtual properties.
+
+2. **.save() Method**:
+   - `await newAdmin.save()` saves the newly created instance to the database.
+   - This method is provided by Mongoose and does more than just insert the document into the database. It also:
+     - Validates the document against the schema (including custom validation rules).
+     - Triggers any pre-save and post-save middleware you have defined (e.g., `pre('save', function(next) { ... })`).
+     - Handles automatic creation of timestamps if your schema includes fields like `createdAt` and `updatedAt`.
+     - Ensures that default values specified in the schema are applied.
+
+#### Benefits:
+- **Schema Validation**: Ensures that the data conforms to the schema, catching any validation errors before saving.
+- **Middleware Support**: Allows for the use of pre-save and post-save hooks to perform actions before or after saving a document.
+- **Instance Methods**: Provides access to instance methods and virtual properties defined on the model.
+
+### Using `insertOne`
+
+```javascript
+await Admin.collection.insertOne({
+  fullName: 'fullName',
+  mobileNumber: 'mobileNumber',
+  username: 'username',
+  password: 'hashedPassword',
+  role: 'role'
+});
+```
+
+#### Explanation and Purpose:
+1. **Direct Collection Method**:
+   - `Admin.collection.insertOne({ ... })` directly accesses the MongoDB collection associated with the `Admin` model and inserts a new document.
+   - This bypasses the Mongoose model instance and directly works with the underlying MongoDB driver.
+
+#### Benefits:
+- **Direct Insertion**: Provides a straightforward way to insert a document without creating a model instance.
+- **Performance**: Might be slightly faster since it bypasses Mongoose's validation and middleware processes.
+
+#### Drawbacks:
+- **No Schema Validation**: Does not validate the document against the Mongoose schema, which can lead to inconsistent or invalid data being inserted.
+- **No Middleware**: Skips any pre-save or post-save middleware defined in the Mongoose schema.
+- **No Instance Methods**: Does not provide access to instance methods or virtual properties defined on the model.
+
+### Choosing Between `.save()` and `insertOne()`
+
+- **Use `.save()` when**:
+  - You need schema validation to ensure data integrity.
+  - You want to utilize middleware for additional processing before or after saving.
+  - You need access to instance methods and virtual properties defined on the model.
+
+- **Use `insertOne()` when**:
+  - You need to perform bulk operations or multiple inserts in a single operation.
+  - You are certain the data is already validated or you do not require schema validation.
+  - You need slightly better performance and can handle validation and processing manually.
+
+In your case, using `.save()` is appropriate because it ensures that the new admin user is validated according to your schema, benefits from any middleware you might have, and maintains consistency within your application's data handling practices.

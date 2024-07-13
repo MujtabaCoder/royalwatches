@@ -1,0 +1,77 @@
+<%- include('header') -%>
+<body class="bg-gradient d-flex align-items-center justify-content-center">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card shadow-lg" style="max-width: 350px; border-radius: 15px;">
+            <div class="card-header text-center text-white bg-gradient" style="background: linear-gradient(to right, #4c45de, #e5e9ef); border-radius: 15px 15px 0 0;">
+                 Login page
+            </div>
+            <div class="card-body" style="padding: 20px 30px;">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username" class="text-primary font-weight-bold">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter your username" >
+                        <div class="invalid-feedback">Username is required.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="text-primary font-weight-bold">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                        <div class="invalid-feedback">Password is required.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block font-weight-bold" style="border-radius: 25px;">Login</button>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Basic validation
+            let isValid = true;
+
+            if (!username) {
+                document.getElementById('username').classList.add('is-invalid');
+                isValid = false;
+            } else {
+                document.getElementById('username').classList.remove('is-invalid');
+            }
+
+            if (!password) {
+                document.getElementById('password').classList.add('is-invalid');
+                isValid = false;
+            } else {
+                document.getElementById('password').classList.remove('is-invalid');
+            }
+            
+            if (!isValid) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/adminlogin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    history.replaceState(null, '', '/index');
+                    window.location.href = '/index';
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while trying to log in');
+            }
+        });
+    </script>
+<%- include('footer') -%>
