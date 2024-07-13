@@ -138,8 +138,7 @@
       
           // Function to convert local file path to relative URL
           function convertLocalPathToRelativeUrl(localPath) {
-            const pathParts = localPath.split('\\');
-            return '/uploads/' + pathParts[pathParts.length - 1];
+            return localPath
           }
       
           products.forEach(product => {

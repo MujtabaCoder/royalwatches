@@ -1,55 +1,64 @@
 const productModel = require('../models/Productmodel')
 const Order = require('../models/orderModel'); 
+const cloudinary = require('../middleware/cloudinaryConfig');
 
-async function UploadProductController(req, res) {
-    try {
-    //   console.log(req.body); // Log the form data
-    //   console.log('Uploaded file:', req.file); 
-  
-      const { productName, brandName, category, description, price, sellingPrice } = req.body;
-      const productImage = req.file ? [req.file.path] : []; // Store the file path in an array
-      
-      const newProduct = new productModel({
-        productName,
-        brandName,
-        category,
-        description,
-        price,
-        sellingPrice,
-        productImage
-      });
-  
-      const saveProduct = await newProduct.save();
-  
-      res.status(201).json({
-        message: "Product uploaded successfully",
-        error: false,
-        success: true,
-        data: saveProduct
-      });
-    } catch (err) {
-      console.error('Error:', err);
-      res.status(400).json({
-        message: err.message || err,
-        error: true,
-        success: false
-      });
-    }
+
+async function uploadProduct(req, res) {
+  try {
+    const { productName, brandName, category, description, price, sellingPrice } = req.body;
+    const productImage = req.file ? req.file.path : ''; // Get the Cloudinary URL
+    
+    // Upload image to Cloudinary
+    const uploadedImage = await cloudinary.uploader.upload(productImage, {
+      folder: 'productimages', // Optional: specify a folder in Cloudinary
+      format: 'jpg', // or any other format you need
+    });
+    // console.log(uploadedImage.secure_url)
+    // Create new product instance
+    const newProduct = new productModel({
+      productName,
+      brandName,
+      category,
+      description,
+      price,
+      sellingPrice,
+      productImage: uploadedImage.secure_url, // Save the secure URL provided by Cloudinary
+    });
+
+    // Save product to database
+    const savedProduct = await newProduct.save();
+
+    res.status(201).json({
+      message: "Product uploaded successfully",
+      error: false,
+      success: true,
+      data: savedProduct,
+    });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(400).json({
+      message: err.message || err,
+      error: true,
+      success: false,
+    });
   }
+}
 
 async function getproducts(req,res){
     try {
         const product = await  productModel.find()
         
-      //  console.log(product)
+        // console.log(product)
+        // console.log(product)
+
         res.json(product)
     } catch (error) {
         res.status(500).json({massage:error.massage})
     }
 }
 function convertLocalPathToRelativeUrl(localPath) {
-  const pathParts = localPath.split('\\');
-  return '/uploads/' + pathParts[pathParts.length - 1];
+
+  return localPath
 }
 async function getproduct (req,res){
     try {
@@ -228,4 +237,4 @@ const productByPrice = async(req,res)=>{
 }
 
 }
-module.exports = {UploadProductController,getproducts,getproduct,addTocart,cartpage,removefromcart,chekoutdata,placeorder,admingetproducts,deleteProduct,productByPrice};
+module.exports = {uploadProduct,getproducts,getproduct,addTocart,cartpage,removefromcart,chekoutdata,placeorder,admingetproducts,deleteProduct,productByPrice};

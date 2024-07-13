@@ -106,7 +106,7 @@ router.post('/userupdate/:userId',adminController.userUpdate)
 
 
 // all produnct related routes 
-router.post('/addproduct', upload.single('productImage'), productController.UploadProductController);
+router.post('/addproduct', upload.single('productImage'), productController.uploadProduct);
 router.get('/getproducts',productController.getproducts)
 router.get('/getproduct/:id',productController.getproduct)
 router.post('/cart',productController.addTocart)

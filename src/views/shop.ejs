@@ -199,8 +199,8 @@
 
     // Function to convert local file path to relative URL
     function convertLocalPathToRelativeUrl(localPath) {
-      const pathParts = localPath.split('\\');
-      return '/uploads/' + pathParts[pathParts.length - 1];
+    
+      return localPath
     }
 
     products.forEach(product => {
@@ -243,12 +243,10 @@ document.getElementById('filterButton').addEventListener('click', async function
 
     // productList.innerHTML = '';
 
-    function convertLocalPathToRelativeUrl(localPath) {
-      const pathParts = localPath.split('\\');
-      return '/uploads/' + pathParts[pathParts.length - 1];
-    }
+    
     products.forEach(product => {
-      const productImage = product.productImage.length > 0 ? convertLocalPathToRelativeUrl(product.productImage[0]) : 'default-image-path.jpg';
+      const productImage = product.productImage.length > 0 ? product.productImage[0] : 'default-image-path.jpg';
+
       const productCard = `
         <div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up">
           <div class="block-4 text-center border">
