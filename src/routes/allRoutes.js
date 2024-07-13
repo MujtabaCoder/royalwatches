@@ -6,7 +6,9 @@ const { requireAuth, isAdmin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload');
 const orderController = require('../controllers/orderController')
 //all routes to render shopping page 
-
+router.get('/',(req, res) => {
+    res.render('index');
+});
 router.get('/about',(req, res) => {
     res.render('about');
 });
