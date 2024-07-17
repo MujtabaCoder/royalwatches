@@ -13,7 +13,7 @@ async function uploadProduct(req, res) {
       folder: 'productimages', // Optional: specify a folder in Cloudinary
       format: 'jpg', // or any other format you need
     });
-    // console.log(uploadedImage.secure_url)
+    //  console.log('fbshcsdbcjskdchhdjk',uploadedImage.secure_url)
     // Create new product instance
     const newProduct = new productModel({
       productName,

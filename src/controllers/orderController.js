@@ -13,42 +13,53 @@ const fetchOrderData = async (req, res) => {
       return res.status(404).json({ message: 'No orders found' });
     }
 
-    const orderDetailsArray = await Promise.all(orders.map(async (order) => {
-      const user = await Admin.findById(order.user);
+    const orderDetails = await Promise.all(orders.map(async (order) => {
+      try {
+        const user = await Admin.findById(order.user);
+        const products = await Promise.all(order.products.map(async (item) => {
+          const product = await Product.findById(item.product);
+          return {
+            name: product.productName,
+            quantity: item.quantity
+          };
+        }));
 
-      const products = await Promise.all(order.products.map(async (item) => {
-        const product = await Product.findById(item.product);
-        return {
-          name: product.productName,
-          quantity: item.quantity
+        const orderDate = new Date(order.orderDate).toLocaleDateString('en-US', {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+
+        const details = {
+          user: user.fullName, // Assuming user name is stored in fullName
+          orderid: order._id,
+          products: products,
+          totalPrice: order.totalPrice,
+          shippingAddress: order.shippingAddress,
+          orderStatus: order.orderStatus,
+          orderDate: orderDate
         };
-      }));
-
-
-      const orderDate = new Date(order.orderDate).toLocaleDateString('en-US', {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-
-      return {
-        user: user.fullName, // Assuming user name is stored in fullName
-        orderid: order._id,
-        products: products,
-        totalPrice: order.totalPrice,
-        shippingAddress: order.shippingAddress,
-        orderStatus: order.orderStatus,
-        orderDate: orderDate
-      };
+        // console.log(details);
+        return details;
+      } catch (err) {
+        // console.error(`Error processing order ${order._id}:`, err);
+        return null;
+      }
     }));
-    // console.log(JSON.stringify(orderDetailsArray) )
 
-    res.render('ecom-product-order', { orders: orderDetailsArray });
+    // Filter out any null results in case of errors
+    const validOrderDetails = orderDetails.filter(details => details !== null);
+
+    // console.log(validOrderDetails);
+
+    res.render('ecom-product-order', { orders: validOrderDetails });
   } catch (error) {
+    // console.error('Error fetching orders:', error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 const deleteOrder = async (req,res)=>{
