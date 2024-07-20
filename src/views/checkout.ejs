@@ -21,15 +21,15 @@
       <div class="col-md-6 mb-5 mb-md-0">
         <h2 class="h3 mb-3 text-black">Billing Details</h2>
         <div class="p-3 p-lg-5 border">
-          <form id="orderForm" method="POST" action="/placeorder">
+          <form id="order-form" method="POST" action="/placeorder">
             <div class="form-group row">
               <div class="col-md-6">
                 <label for="fullName" class="text-black">Full Name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="fullName" name="fullName" required>
+                <input type="text" class="form-control" value="<%=user.fullName%>" id="fullName" name="fullName" required>
               </div>
               <div class="col-md-6">
                 <label for="mobileNumber" class="text-black">Mobile number <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="mobileNumber" name="mobileNumber" required>
+                <input type="text" class="form-control" value="<%=user.mobileNumber%>"  id="mobileNumber" name="mobileNumber" required>
               </div>
             </div>
 
@@ -43,16 +43,16 @@
             <div class="form-group row">
               <div class="col-md-12">
                 <label for="address" class="text-black">Address <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="address" name="address" placeholder="Street address" required>
+                <input type="text" class="form-control" value="<%=user.address%>" id="address" name="address" placeholder="Street address" required>
               </div>
             </div>
             <!-- Add more form fields as needed -->
 
             <input type="hidden" name="products" value='<%= JSON.stringify(productsInCart) %>'>
             
-
+            <!-- id="rzp-button1" -->
             <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-lg py-3 btn-block">Place Order</button>
+              <button type="submit" id="rzp-button1"  class="btn btn-primary btn-lg py-3 btn-block">Place Order</button>
             </div>
           
         </div>
@@ -71,7 +71,7 @@
             <tbody>
               <% let cartSubtotal = 0; %>
               <% productsInCart.forEach(item => { %>
-                <% const total = item.product.sellingPrice * item.quantity; %>
+                <% const total = item.product.price * item.quantity; %>
                 <tr>
                   <td><%= item.product.productName %> <strong class="mx-2">x</strong> <%= item.quantity %></td>
                   <td>$<%= total.toFixed(2) %></td>
@@ -95,5 +95,84 @@
     </div>
   </div>
 </div>
+<script>
+  document.getElementById('rzp-button1').onclick = async function(e) {
+      e.preventDefault();
 
+      try {
+          const response = await fetch('/create-order', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  amount: "<%= cartSubtotal.toFixed(2) %>", // Amount in rupees
+                  currency: 'INR',
+                  receipt: 'order_rcptid_11'
+              })
+          });
+
+          const order = await response.json();
+          // console.log(order); // Check the order details here
+
+          const options = {
+              "key": "rzp_test_dxPHkrmdpsfYog", // Enter the Key ID generated from the Dashboard
+              "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+              "currency": order.currency,
+              "name": "Acme Corp",
+              "description": "Test Transaction",
+              "image": "https://example.com/your_logo",
+              "order_id": order.id, // This is a sample Order ID. Pass the `id` obtained in the previous step
+              "handler": function (response){
+                  // Send payment details to the server for verification
+                  fetch('/verify-payment', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({
+                          razorpay_order_id: response.razorpay_order_id,
+                          razorpay_payment_id: response.razorpay_payment_id,
+                          razorpay_signature: response.razorpay_signature
+                      })
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                        document.getElementById('order-form').submit();
+                        // window.location.href = '/thankyou';
+                          alert('Payment successful and verified!');
+                      } else {
+                          alert('Payment verification failed!');
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error verifying payment:', error);
+                      alert('Oops! Something went wrong during payment verification.');
+                  });
+              },
+              "prefill": {
+                  "name": "Gaurav Kumar",
+                  "email": "gaurav.kumar@example.com",
+                  "contact": "9999999999"
+              },
+              "notes": {
+                  "address": "Razorpay Corporate Office"
+              },
+              "theme": {
+                  "color": "#6f42c1" // Purple color
+              }
+          };
+
+          const rzp1 = new Razorpay(options);
+          rzp1.on('payment.failed', function (response){
+              alert(response.error.description);
+          });
+          rzp1.open();
+      } catch (error) {
+          console.error('Error opening Razorpay checkout:', error);
+          alert('Oops! Something went wrong.');
+      }
+  }
+</script>
 <%- include('footer') -%>

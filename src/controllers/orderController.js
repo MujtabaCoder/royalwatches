@@ -1,8 +1,11 @@
-
+require('dotenv').config();
 const Order = require('../models/orderModel');
 const Admin = require('../models/Admin');
 const Product = require('../models/Productmodel');
-
+const { render } = require('ejs');
+const easyinvoice = require('easyinvoice');
+const crypto = require('crypto');
+const Razorpay = require('razorpay');
 
 
 const fetchOrderData = async (req, res) => {
@@ -135,6 +138,135 @@ const getOrderStatus = async()=>{
 //   res.status(200).json({ message: 'Product removed from cart' });
 // }
 
+const profiledata= async(req,res)=>{
+  try {
 
+    const user = await Admin.findById(req.session.userId);
+
+    const userId = req.session.userId;
+    const orders = await Order.find({ user: userId }).populate('user products.product');
     
-module.exports={fetchOrderData,deleteOrder,updateOrderStatus,getOrderStatus}
+    if (orders.length === 0) {
+      return res.status(404).json({ status: 'No orders found for this user.' });
+    }
+  
+    // Assuming you want to get the status of the most recent order
+    const latestOrder = orders[orders.length - 1];
+    const data = {
+      username:user.fullName,
+      mobileNO:user.mobileNumber,
+      status: latestOrder.orderStatus,
+      orderId:latestOrder._id
+    }
+    // console.log(data);
+
+
+    res.render('profile',{data:data })
+  } catch (error) {
+    console.error('Error fetching order status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+     
+}
+
+async function generateInvoice(order, user) {
+  const invoiceData = {
+    "images": {
+      "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
+      "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg"
+    },
+    "sender": {
+      "company": "Shoppers",
+      "address": "westrern park, Kashimira, miraroad(east)",
+      "zip": "401107",
+      "city": "Mumbai",
+      "country": "India"
+    },
+    "client": {
+      "company": user.fullName || "Client Corp", // Adjust as necessary
+      "address": order.shippingAddress || "Clientstreet 456",
+      "zip": user.mobileNumber || "4567 CD",
+      // "city": user.city || "Clientcity",
+      // "country": user.country || "Clientcountry"
+    },
+    "information": {
+      "number": order._id,
+      "date": new Date().toISOString().split('T')[0],
+      "due-date": new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0]
+    },
+    "products": order.products.map(p => ({
+      "quantity": p.quantity,
+      "description": p.product.productName,
+      "tax-rate": 0,
+      "price": p.product.price
+    })),
+    "bottom-notice": "Thank you for your business."
+  };
+
+  const result = await easyinvoice.createInvoice(invoiceData);
+  return result.pdf; // The base64 string of the invoice PDF
+}
+
+const downloadInvoice = async (req, res) => {
+  const orderId = req.params.orderId;
+  try {
+    const order = await Order.findById(orderId).populate('products.product');
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+    const user = await Admin.findById(order.user); // Assuming you have a User model
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    // console.log(order);
+    const pdfBase64 = await generateInvoice(order, user);
+    const pdfBuffer = Buffer.from(pdfBase64, 'base64');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=invoice-${orderId}.pdf`);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error('Error generating invoice:', err);
+    res.status(500).send('Error generating invoice');
+  }
+}
+
+const razorpayInstance = new Razorpay({
+  key_id: process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET
+});
+
+const createOrder = async (req, res) => {
+  const { amount, currency, receipt } = req.body;
+  // console.log(amount, currency, receipt);
+
+  try {
+      const options = {
+          amount: amount * 100, // Amount in paise (multiply by 100 for rupees)
+          currency,
+          receipt
+      };
+
+      const order = await razorpayInstance.orders.create(options);
+      // console.log(order);
+      res.json(order);
+  } catch (error) {
+      res.status(500).send(error);
+  }
+}
+
+const verifyPayment = (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    // console.log(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+  const hmac = crypto.createHmac('sha256', 'jg6cKF95rWoif59eb0xlAbCd');
+  hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+  const generated_signature = hmac.digest('hex');
+//  console.log(generated_signature , razorpay_signature);
+  if (generated_signature === razorpay_signature) {
+      res.json({ success: true });
+  } else {
+      res.json({ success: false });
+  }
+}
+
+module.exports={fetchOrderData,deleteOrder,updateOrderStatus,getOrderStatus,profiledata,downloadInvoice,createOrder,verifyPayment}

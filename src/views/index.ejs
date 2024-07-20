@@ -1,11 +1,11 @@
 <%- include('header') -%>
-    <div class="site-blocks-cover" style="background-image: url(images/watch6.jpg);" data-aos="fade">
+    <div class="site-blocks-cover" style="background-image: url(images/frontpage.webp);" data-aos="fade">
       <div class="container">
         <div class="row align-items-end align-items-md-center justify-content-start">
           <div class="col-md-5 text-center text-md-left pt-5 pt-md-0">
-            <h1 class="mb-2 primary" >Finding Your Perfect Watch</h1>
+            <h1 class="mb-2 text-primary" >Finding Your Perfect Watch</h1>
             <div class="intro-text text-center text-md-left">
-              <p class="mb-4">Discover the perfect blend of elegance and precision with our collection of watches. Crafted with meticulous attention to detail, our timepieces offer not only a reliable way to keep time but also a stylish accessory that complements any outfit </p>
+              <p class="mb-4 text-white" >Discover the perfect blend of elegance and precision with our collection of watches. Crafted with meticulous attention to detail, our timepieces offer not only a reliable way to keep time but also a stylish accessory that complements any outfit </p>
               <p>
                 <a href="/shop" class="btn btn-sm btn-primary">Shop Now</a>
               </p>
@@ -24,7 +24,7 @@
             </div>
             <div class="text">
               <h2 class="text-uppercase">Free Shipping</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
+              <p>Enjoy complimentary shipping on all orders, ensuring your purchases arrive at your doorstep without any additional cost. No minimum spend required</p>
             </div>
           </div>
           <div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay="100">
@@ -33,7 +33,7 @@
             </div>
             <div class="text">
               <h2 class="text-uppercase">Free Returns</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
+              <p>Return any item hassle-free within 30 days at no extra cost. Your satisfaction is our priority, and returns are on us.</p>
             </div>
           </div>
           <div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay="200">
@@ -42,7 +42,7 @@
             </div>
             <div class="text">
               <h2 class="text-uppercase">Customer Support</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
+              <p> Our dedicated support team is available 24/7 to assist with any queries or issues. We're here to ensure a seamless shopping experience for you.</p>
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@
           <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
             <a class="block-2-item" href="#">
               <figure class="image">
-                <img src="images/women.jpg" alt="" class="img-fluid">
+                <img src="images/womenswatch.jpeg" alt="" class="img-fluid">
               </figure>
               <div class="text">
                 <span class="text-uppercase">Collections</span>
@@ -77,7 +77,7 @@
           <div class="col-sm-6 col-md-6 col-lg-4 mb-5 mb-lg-0" data-aos="fade" data-aos-delay="200">
             <a class="block-2-item" href="#">
               <figure class="image">
-                <img src="images/men.jpg" alt="" class="img-fluid">
+                <img src="images/menswatch.webp" alt="" class="img-fluid">
               </figure>
               <div class="text">
                 <span class="text-uppercase">Collections</span>
@@ -115,7 +115,7 @@
         </div>
         <div class="row align-items-center">
           <div class="col-md-12 col-lg-7 mb-5">
-            <a href="#"><img src="images/blog_1.jpg" alt="Image placeholder" class="img-fluid rounded"></a>
+            <a href="#"><img src="images/watch1.jpg" alt="Image placeholder" class="img-fluid rounded"></a>
           </div>
           <div class="col-md-12 col-lg-5 text-center pl-md-5">
             <h2><a href="#">50% less in all items</a></h2>
@@ -135,28 +135,36 @@
           }
           const products = await response.json();
           const productGrid = document.getElementById('productGrid');
-      
+    
           // Function to convert local file path to relative URL
           function convertLocalPathToRelativeUrl(localPath) {
-            return localPath
+            return localPath;
           }
-      
-          products.forEach(product => {
+    
+          // Limit the number of products to display
+          const productsToDisplay = products.slice(0, 3); // Display only the first 3 products
+    
+          productsToDisplay.forEach(product => {
             const productImage = product.productImage.length > 0 ? convertLocalPathToRelativeUrl(product.productImage[0]) : 'default-image-path.jpg';
             const productCard = `
-              <div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up">
-                <div class="block-4 text-center border">
-                  <figure class="block-4-image">
-                    <a href="/shop-single"><img src="${productImage}" alt="${product.productName}" class="img-fluid"></a>
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="/getproduct/${product._id}">${product.brandName}<br>${product.productName}</a></h3>
-                    
-                    <p class="text-primary font-weight-bold">$${product.price}</p>
-                  </div>
-                </div>
-              </div>
-            `;
+      <div class="col-sm-6 col-lg-4 mb-4">
+        <div class="product-card block-4 text-center border">
+          <figure class="block-4-image">
+            <a href="/getproduct/${product._id}">
+              <img src="${product.productImage}" alt="${product.productName}" class="img-fluid">
+            </a>
+          </figure>
+          <div class="block-4-text">
+            <h3>
+              <a href="/getproduct/${product._id}">
+                ${product.brandName}<br>${product.productName}
+              </a>
+            </h3>
+            <p class="text-primary font-weight-bold">$${product.price}</p>
+          </div>
+        </div>
+      </div>
+    `;
             productGrid.innerHTML += productCard;
           });
         } catch (error) {
@@ -164,6 +172,6 @@
           // Handle error fetching products
         }
       });
-      </script>
-      
+    </script>
+    
     <%- include('footer') -%>

@@ -5,6 +5,7 @@ const productController = require('../controllers/productController')
 const { requireAuth, isAdmin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload');
 const orderController = require('../controllers/orderController')
+
 //all routes to render shopping page 
 router.get('/',(req, res) => {
     res.render('index');
@@ -21,9 +22,7 @@ router.get('/shop',(req, res) => {
 router.get('/cart',(req, res) => {
     res.render('cart');
 });
-// router.get('/checkout',(req, res) => {
-//     res.render('checkout');
-// });
+
 router.get('/contact',(req, res) => {
     res.render('contact');
 });
@@ -90,6 +89,13 @@ router.get('/ecom-product-detail',  (req, res) => {
 router.get('/ecom-product-list',  (req, res) => {
     res.render('ecom-product-list');
 });
+// router.get('/profile', async(req, res) => {
+//    const user = await Admin.findById(req.session.userId);
+
+//     res.render('profile',{user:user});
+// });
+
+router.get('/profile',orderController.profiledata);
 
 // Route to handle for controller
 
@@ -127,8 +133,11 @@ router.get('/ecom-product-grid', requireAuth,isAdmin,productController.admingetp
 router.delete('/product/:productId', requireAuth,isAdmin,productController.deleteProduct)
 
 router.get('/productsbyprice', productController.productByPrice);
+router.get('/download-invoice/:orderId',orderController.downloadInvoice)
 
+router.post('/create-order', orderController.createOrder);
 
+router.post('/verify-payment', orderController.verifyPayment);
 
 
 

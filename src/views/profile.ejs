@@ -1,0 +1,103 @@
+<%- include('header') -%>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #343a40;
+    }
+    .profile-card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .profile-header {
+      background-color: #6f42c1;
+      color: #fff;
+      padding: 20px;
+      border-radius: 10px 10px 0 0;
+      text-align: center;
+    }
+    .profile-details {
+      padding: 20px;
+    }
+    .order-status {
+      margin-top: 20px;
+    }
+    .order-status .progress {
+      height: 30px;
+      border-radius: 10px;
+      background-color: #e9ecef;
+    }
+    .order-status .progress-bar {
+      background-color: #6f42c1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <h2>User Profile</h2>
+      </div>
+      <div class="profile-details">
+        <h4>Name: <%= data.username %></h4>
+        <h4>Mobile No: <%=data.mobileNO%></h4>
+      </div>
+      <div class="order-status">
+        <h5>Order Status</h5>
+        <div class="progress">
+          <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="d-flex justify-content-between mt-2">
+          <span>Ordered</span>
+          <span>Shipped</span>
+          <span>Delivered</span>
+        </div>
+      </div>
+      <button id="download-invoice" class="btn btn-primary mt-3">Download Invoice</button>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      let progressBarWidth;
+      const orderStatus = "<%= data.status %>";
+
+      switch (orderStatus) {
+        case 'Pending':
+          progressBarWidth = '0%';
+          break;
+        case 'Ordered':
+          progressBarWidth = '30%';
+          break;
+        case 'Shipped':
+          progressBarWidth = '70%';
+          break;
+        case 'Delivered':
+          progressBarWidth = '100%';
+          break;
+        default:
+          progressBarWidth = '0%';
+      }
+
+      $('#progress-bar').css('width', progressBarWidth).attr('aria-valuenow', progressBarWidth.replace('%', '')).text(progressBarWidth);
+
+      document.getElementById('download-invoice').addEventListener('click', function() {
+        const orderId = "<%= data.orderId %>"; // Replace with actual order ID
+        window.location.href = `/download-invoice/${orderId}`;
+      });
+
+    });
+  </script>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ 
+
+<%- include('footer') -%>

@@ -16,6 +16,7 @@
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
+    "easyinvoice": "^3.0.47",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
@@ -24,6 +25,7 @@
     "mongoose": "^8.4.1",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "razorpay": "^2.9.4"
   }
 }

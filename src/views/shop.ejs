@@ -206,18 +206,24 @@
     products.forEach(product => {
       const productImage = product.productImage.length > 0 ? convertLocalPathToRelativeUrl(product.productImage[0]) : 'default-image-path.jpg';
       const productCard = `
-        <div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up">
-          <div class="block-4 text-center border">
-            <figure class="block-4-image">
-              <a href="/getproduct/${product._id}"><img src="${productImage}" alt="${product.productName}" class="img-fluid" width="300" height="150" ></a>
-            </figure>
-            <div class="block-4-text p-4">
-              <h3><a href="/getproduct/${product._id}">${product.brandName}<br>${product.productName} </a></h3>
-              <p class="text-primary font-weight-bold">$${product.price}</p>
-            </div>
+      <div class="col-sm-6 col-lg-4 mb-4">
+        <div class="product-card block-4 text-center border">
+          <figure class="block-4-image">
+            <a href="/getproduct/${product._id}">
+              <img src="${product.productImage}" alt="${product.productName}" class="img-fluid">
+            </a>
+          </figure>
+          <div class="block-4-text">
+            <h3>
+              <a href="/getproduct/${product._id}">
+                ${product.brandName}<br>${product.productName}
+              </a>
+            </h3>
+            <p class="text-primary font-weight-bold">$${product.price}</p>
           </div>
         </div>
-      `;
+      </div>
+    `;
       productGrid.innerHTML += productCard;
     });
   } catch (error) {
@@ -248,18 +254,24 @@ document.getElementById('filterButton').addEventListener('click', async function
       const productImage = product.productImage.length > 0 ? product.productImage[0] : 'default-image-path.jpg';
 
       const productCard = `
-        <div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up">
-          <div class="block-4 text-center border">
-            <figure class="block-4-image">
-              <a href="/getproduct/${product._id}"><img src="${productImage}" alt="${product.productName}" class="img-fluid" width="300" height="150" ></a>
-            </figure>
-            <div class="block-4-text p-4">
-              <h3><a href="/getproduct/${product._id}">${product.brandName}<br>${product.productName} </a></h3>
-              <p class="text-primary font-weight-bold">$${product.price}</p>
-            </div>
+      <div class="col-sm-6 col-lg-4 mb-4">
+        <div class="product-card block-4 text-center border">
+          <figure class="block-4-image">
+            <a href="/getproduct/${product._id}">
+              <img src="${product.productImage}" alt="${product.productName}" class="img-fluid">
+            </a>
+          </figure>
+          <div class="block-4-text">
+            <h3>
+              <a href="/getproduct/${product._id}">
+                ${product.brandName}<br>${product.productName}
+              </a>
+            </h3>
+            <p class="text-primary font-weight-bold">$${product.price}</p>
           </div>
         </div>
-      `;
+      </div>
+    `;
       productGrid.innerHTML += productCard;
     });
 });

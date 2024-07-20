@@ -1,7 +1,7 @@
 const productModel = require('../models/Productmodel')
 const Order = require('../models/orderModel'); 
 const cloudinary = require('../middleware/cloudinaryConfig');
-
+const Admin = require('../models/Admin')
 
 async function uploadProduct(req, res) {
   try {
@@ -145,10 +145,15 @@ async function removefromcart(req,res){
   }
   res.status(200).json({ message: 'Product removed from cart' });
 }
-async function chekoutdata(req,res){
+async function chekoutdata  (req,res){
+  const userId = req.session.userId
+
+  const user = await Admin.findById(userId)
+  // console.log(user);
+
   const productsInCart = JSON.parse(req.query.productsInCart);
     // console.log(productsInCart);
-    res.render('checkout', { productsInCart: productsInCart });
+    res.render('checkout', { productsInCart: productsInCart ,user:user});
 }
 
 async function placeorder(req, res) {
