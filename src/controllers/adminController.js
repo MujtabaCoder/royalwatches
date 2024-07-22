@@ -1,10 +1,61 @@
 // const jwtUtils = require('../jwt');
+// require('dotenv').config();
 const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 
+
+const successGoogleLogin = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.redirect('/failure');
+    }
+
+    const { given_name: fullName, email } = req.user;
+
+    // Validate the email
+    if (!email || !fullName) {
+      return res.status(400).send("Invalid user data received");
+    }
+
+    let user = await Admin.findOne({ email });
+
+    if (user) {
+      req.session.userId = user._id;
+      return res.redirect('/');
+    }
+
+    // Create new user if not exists
+    user = new Admin({
+      fullName,
+      email,
+      username: email, // You might want to handle username differently or generate one
+      password: '',    // Since using Google Sign-In, password is not required
+      dob: '',         // Initialize other required fields if needed
+      address: '',
+      mobileNumber: '',
+      role: 'customer' // Assuming role 'customer' for new users
+    });
+
+    await user.save();
+    req.session.userId = user._id;
+
+    res.redirect('/');
+  } catch (error) {
+    console.error('Error during Google login:', error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+const failureGoogleLogin = (req , res) => { 
+res.send("Error"); 
+}
+
+
+
 const signup = async (req, res) => {
   try {
-    const { fullName, mobileNumber, username, password, role, dob, address } = req.body;
+    const { fullName, mobileNumber, username, password,email, dob, address } = req.body;
+
 
     const existingUser = await Admin.findOne({ username });
     if (existingUser) {
@@ -18,7 +69,7 @@ const signup = async (req, res) => {
       mobileNumber,
       username,
       password: hashedPassword,
-      role,
+      email,
       dob,
       address,
     });
@@ -138,5 +189,5 @@ const userUpdate = async(req,res)=>{
     }
 
 }
-module.exports = { signup,login, logout,fetchUserData,deleteData,updateuser,userUpdate,fetchUserDatademo };
+module.exports = {  successGoogleLogin,failureGoogleLogin,signup,login, logout,fetchUserData,deleteData,updateuser,userUpdate,fetchUserDatademo };
 

@@ -7,28 +7,28 @@ const userSchema = new mongoose.Schema({
   },
   mobileNumber: {
     type: String,
-    required: true
   },
   username: {
+    type: String,
+    
+  },
+  email: {
     type: String,
     required: true,
     unique: true
   },
   password: {
     type: String,
-    required: true
   },
   role: {
     type: String,
-    required: true
+    default: 'customer'
   },
   dob: {
     type: String,
-    required: true
   },
   address: {
     type: String,
-    required: true
   },
 });
 

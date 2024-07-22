@@ -138,36 +138,40 @@ const getOrderStatus = async()=>{
 //   res.status(200).json({ message: 'Product removed from cart' });
 // }
 
-const profiledata= async(req,res)=>{
+const profiledata = async (req, res) => {
   try {
+    if (!req.session.userId){
+      res.redirect('/index')
+    }
 
     const user = await Admin.findById(req.session.userId);
-
+    
     const userId = req.session.userId;
     const orders = await Order.find({ user: userId }).populate('user products.product');
-    
-    if (orders.length === 0) {
-      return res.status(404).json({ status: 'No orders found for this user.' });
-    }
-  
-    // Assuming you want to get the status of the most recent order
-    const latestOrder = orders[orders.length - 1];
-    const data = {
-      username:user.fullName,
-      mobileNO:user.mobileNumber,
-      status: latestOrder.orderStatus,
-      orderId:latestOrder._id
-    }
-    // console.log(data);
 
+    let data = {
+      username: user.fullName,
+      mobileNO: user.mobileNumber,
+      status: 'No orders',
+      orderId: null
+    };
 
-    res.render('profile',{data:data })
+    if (orders.length > 0) {
+      const latestOrder = orders[orders.length - 1];
+      data = {
+        ...data,
+        status: latestOrder.orderStatus,
+        orderId: latestOrder._id
+      };
+    }
+
+    res.render('profile', { data });
   } catch (error) {
     console.error('Error fetching order status:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-     
-}
+};
+
 
 async function generateInvoice(order, user) {
   const invoiceData = {

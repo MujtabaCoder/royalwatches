@@ -25,18 +25,18 @@
             <div class="form-group row">
               <div class="col-md-6">
                 <label for="fullName" class="text-black">Full Name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" value="<%=user.fullName%>" id="fullName" name="fullName" required>
+                <input type="text" class="form-control" value="<%=user.fullName %>" id="fullName" name="fullName" required>
               </div>
               <div class="col-md-6">
                 <label for="mobileNumber" class="text-black">Mobile number <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" value="<%=user.mobileNumber%>"  id="mobileNumber" name="mobileNumber" required>
+                <input type="text" class="form-control" value="<%=user.mobileNumber%>" id="mobileNumber" name="mobileNumber" required>
               </div>
             </div>
 
             <div class="form-group row">
               <div class="col-md-12">
                 <label for="email" class="text-black">Email address </label>
-                <input type="email" class="form-control" id="email" name="email">
+                <input type="email" class="form-control" id="email" value="<%=user.email%>" name="email">
               </div>
             </div>
 
@@ -49,10 +49,9 @@
             <!-- Add more form fields as needed -->
 
             <input type="hidden" name="products" value='<%= JSON.stringify(productsInCart) %>'>
-            
-            <!-- id="rzp-button1" -->
+
             <div class="form-group">
-              <button type="submit" id="rzp-button1"  class="btn btn-primary btn-lg py-3 btn-block">Place Order</button>
+              <button type="submit" id="rzp-button1" class="btn btn-primary btn-lg py-3 btn-block">Place Order</button>
             </div>
           
         </div>
@@ -95,9 +94,16 @@
     </div>
   </div>
 </div>
+
 <script>
   document.getElementById('rzp-button1').onclick = async function(e) {
       e.preventDefault();
+
+      const address = document.getElementById('address').value;
+      if (!address) {
+          alert('Please provide an address before proceeding to payment.');
+          return;
+      }
 
       try {
           const response = await fetch('/create-order', {
@@ -106,14 +112,13 @@
                   'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                  amount: "<%= cartSubtotal.toFixed(2) %>", // Amount in rupees
+                  amount: "<%= cartSubtotal.toFixed(2) %>", // Amount in currency subunits
                   currency: 'INR',
                   receipt: 'order_rcptid_11'
               })
           });
 
           const order = await response.json();
-          // console.log(order); // Check the order details here
 
           const options = {
               "key": "rzp_test_dxPHkrmdpsfYog", // Enter the Key ID generated from the Dashboard
@@ -139,8 +144,7 @@
                   .then(response => response.json())
                   .then(data => {
                       if (data.success) {
-                        document.getElementById('order-form').submit();
-                        // window.location.href = '/thankyou';
+                          document.getElementById('order-form').submit();
                           alert('Payment successful and verified!');
                       } else {
                           alert('Payment verification failed!');
@@ -152,12 +156,12 @@
                   });
               },
               "prefill": {
-                  "name": "Gaurav Kumar",
-                  "email": "gaurav.kumar@example.com",
-                  "contact": "9999999999"
+                  "name": "<%= user.fullName %>",
+                  "email": "<%= user.email %>",
+                  "contact": "<%= user.mobileNumber %>"
               },
               "notes": {
-                  "address": "Razorpay Corporate Office"
+                  "address": "<%= user.address %>"
               },
               "theme": {
                   "color": "#6f42c1" // Purple color
@@ -175,4 +179,5 @@
       }
   }
 </script>
+
 <%- include('footer') -%>

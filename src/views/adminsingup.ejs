@@ -43,9 +43,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="role" class="text-primary font-weight-bold">Role</label>
-                                <input type="text" class="form-control" name="role" id="role" placeholder="Choose a role">
-                                <div class="invalid-feedback">Role is required.</div>
+                                <label for="role" class="text-primary font-weight-bold">Email</label>
+                                <input type="text" class="form-control" name="email" id="email" placeholder="write Email id">
+                                <div class="invalid-feedback">email is required.</div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -77,7 +77,7 @@
             const mobileNumber = document.getElementById('mobileNumber').value;
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
+            const email = document.getElementById('email').value;
             const dob = document.getElementById('dob').value;
             const address = document.getElementById('address').value;
 
@@ -116,11 +116,11 @@
             }
 
             // Validate role
-            if (!role) {
-                document.getElementById('role').classList.add('is-invalid');
+            if (!email) {
+                document.getElementById('email').classList.add('is-invalid');
                 return;
             } else {
-                document.getElementById('role').classList.remove('is-invalid');
+                document.getElementById('email').classList.remove('is-invalid');
             }
 
             // Validate phone number
@@ -139,7 +139,7 @@
                 mobileNumber,
                 username,
                 password,
-                role,
+                email,
                 dob,
                 address
             };

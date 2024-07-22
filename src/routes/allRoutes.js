@@ -6,7 +6,32 @@ const { requireAuth, isAdmin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload');
 const orderController = require('../controllers/orderController')
 
+const passport = require('passport'); 
+require('../middleware/passport');
+
+router.use(passport.initialize()); 
+router.use(passport.session());
+
+router.get('/auth/google' , passport.authenticate('google', { scope: 
+	[ 'email', 'profile' ] 
+})); 
+
+// Auth Callback 
+router.get( '/auth/google/callback', 
+	passport.authenticate( 'google', { 
+		successRedirect: '/success', 
+		failureRedirect: '/demo'
+}));
+
+// Success 
+router.get('/success' , adminController.successGoogleLogin); 
+
+// failure 
+router.get('/failure' , adminController.failureGoogleLogin);
+
 //all routes to render shopping page 
+
+
 router.get('/',(req, res) => {
     res.render('index');
 });
@@ -98,7 +123,6 @@ router.get('/ecom-product-list',  (req, res) => {
 router.get('/profile',orderController.profiledata);
 
 // Route to handle for controller
-
 router.get('/adminpage', requireAuth,isAdmin, adminController.fetchUserData);
 
 router.post('/adminsignup', adminController.signup );
@@ -114,6 +138,7 @@ router.post('/userupdate/:userId',adminController.userUpdate)
 // all produnct related routes 
 router.post('/addproduct', upload.single('productImage'), productController.uploadProduct);
 router.get('/getproducts',productController.getproducts)
+router.get('/featuredproducts',productController.featuredproducts)
 router.get('/getproduct/:id',productController.getproduct)
 router.post('/cart',productController.addTocart)
 router.get('/cartpage',productController.cartpage)

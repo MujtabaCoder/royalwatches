@@ -44,18 +44,45 @@ async function uploadProduct(req, res) {
   }
 }
 
-async function getproducts(req,res){
-    try {
-        const product = await  productModel.find()
-        
-        // console.log(product)
-        // console.log(product)
+async function getproducts(req, res) {
+  try {
+      const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+      const limit = parseInt(req.query.limit) || 6; // Default to 9 products per page if not provided
+      const startIndex = (page - 1) * limit;
 
-        res.json(product)
-    } catch (error) {
-        res.status(500).json({massage:error.massage})
-    }
+      const totalProducts = await productModel.countDocuments();
+      const products = await productModel.find().skip(startIndex).limit(limit);
+     
+
+      res.json({
+          products: products,
+          totalProducts: totalProducts,
+          totalPages: Math.ceil(totalProducts / limit),
+          currentPage: page
+      });
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
 }
+
+ async function  featuredproducts(req,res){
+
+  try {
+    // Fetch 3 random products
+    const products = await productModel.aggregate([
+      { $sample: { size: 3 } }
+    ]);
+
+    // console.log(products);
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching random products:', error);
+    throw error;
+  }
+
+
+}
+
 function convertLocalPathToRelativeUrl(localPath) {
 
   return localPath
@@ -147,6 +174,10 @@ async function removefromcart(req,res){
 }
 async function chekoutdata  (req,res){
   const userId = req.session.userId
+
+  if(!userId){
+    res.redirect('/adminloginpage')
+  }
 
   const user = await Admin.findById(userId)
   // console.log(user);
@@ -242,4 +273,4 @@ const productByPrice = async(req,res)=>{
 }
 
 }
-module.exports = {uploadProduct,getproducts,getproduct,addTocart,cartpage,removefromcart,chekoutdata,placeorder,admingetproducts,deleteProduct,productByPrice};
+module.exports = {uploadProduct,getproducts,getproduct,addTocart,cartpage,removefromcart,chekoutdata,placeorder,admingetproducts,deleteProduct,productByPrice,featuredproducts};

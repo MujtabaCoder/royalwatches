@@ -129,7 +129,7 @@
     <script>
       document.addEventListener('DOMContentLoaded', async function () {
         try {
-          const response = await fetch('/getproducts');
+          const response = await fetch('/featuredproducts');
           if (!response.ok) {
             throw new Error('Failed to fetch products.');
           }
