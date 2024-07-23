@@ -134,10 +134,10 @@
             <li><a href="#">Catalogue</a></li>
             <li><a href="#">New Arrivals</a></li>
             <li><a href="/contact">Contact</a></li>
-            <li><button class="btn btn-primary"><a href="/adminloginpage" style="color: aliceblue;">login</a></button></li>
-            <li>
-              <button class="btn btn-primary"><a href="/adminsinguppage" style="color: aliceblue;">Sing up</a></button>
-            </li>
+            <% if (!isLoggedIn) { %>
+              <li><button class="btn btn-primary"><a href="/adminloginpage" style="color: aliceblue;">Login</a></button></li>
+              <li><button class="btn btn-primary"><a href="/adminsinguppage" style="color: aliceblue;">Sign up</a></button></li>
+            <% } %>
     <button id="logout-button" class="btn btn-primary">logout</button>
           </ul>
         </div>

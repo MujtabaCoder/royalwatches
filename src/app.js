@@ -48,6 +48,11 @@ app.use((req,res,next)=>{
     next();
 })
 
+
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = req.session && req.session.userId ? true : false;
+    next();
+  });
 app.use(allRoutes);
 
 const PORT = process.env.PORT || 3000;
