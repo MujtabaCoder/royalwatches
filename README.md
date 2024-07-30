@@ -65,20 +65,36 @@
 
 ## Screenshots
 
-![Homepage](path/to/homepage-screenshot.png)
+![Homepage](src/public/images/scrshoot1.png)
 *Homepage*
 
-![Product Listing](path/to/product-listing-screenshot.png)
+![Product Listing](src/public/images/scrshoot2.png)
 *Product Listing*
 
-![Shopping Cart](path/to/shopping-cart-screenshot.png)
+![Single Product Listing](src/public/images/scrshoot3.png)
+*Single Product Listing*
+
+![Shopping Cart](src/public/images/scrshoot4.png)
 *Shopping Cart*
 
-![Checkout](path/to/checkout-screenshot.png)
+![Checkout](src/public/images/scrshoot5.png)
 *Checkout*
 
-![User Dashboard](path/to/user-dashboard-screenshot.png)
-*User Dashboard*
+![Payment](src/public/images/scrshoot6.png)
+*Payment*
+
+![admin for uplodaing product Dashboard](src/public/images/scrshoot7.png)
+*Admin Dashboard*
+
+![admin  Dashboard for product lisitng ](src/public/images/scrshoot8.png)
+*Admin Dashboard*
+
+![admin Dashboard to manage  order management ](src/public/images/scrshoot9.png)
+*admin Dashboard to manage  order  management*
+
+
+
+
 
 ## Contributing
 
